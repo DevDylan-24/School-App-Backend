@@ -1,0 +1,9 @@
+Middleware
+    Save JWT token locally to supply in header on frontend(Session storage maybe idk)
+
+User route REST API
+    Do login and signup validation by checking database
+
+Orders REST API
+
+Products REST API
