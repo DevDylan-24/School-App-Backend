@@ -4,6 +4,7 @@ const logger = require('./middleware/logger');
 const protect = require('./middleware/auth');
 const jwt = require('jsonwebtoken');
 const usersRouter = require('./routes/users');
+const lessonsRouter = require('./routes/lessons');
 
 // Load environment variables from .env file
 dotenv.config();
@@ -15,7 +16,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(logger);
 
+// Mount routers
 app.use('/api/users', usersRouter);
+app.use('/api/lessons', lessonsRouter);
+
 
 app.get('/', (req, res) => {
   res.status(200).send('Hello World!');
