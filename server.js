@@ -3,6 +3,7 @@ const dotenv = require('dotenv');
 const logger = require('./middleware/logger');
 const protect = require('./middleware/auth');
 const jwt = require('jsonwebtoken');
+const usersRouter = require('./routes/users');
 
 // Load environment variables from .env file
 dotenv.config();
@@ -14,13 +15,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(logger);
 
+app.use('/api/users', usersRouter);
+
 app.get('/', (req, res) => {
   res.status(200).send('Hello World!');
 });
 
-app.get('/api/users', (req, res) => {
-  res.status(200).send('Users route!');
-});
+
 
 // Protected route example
 app.get('/api/orders', protect, (req, res) => {
@@ -29,14 +30,10 @@ app.get('/api/orders', protect, (req, res) => {
 });
 
 // Temporary login route for testing
-app.post('/api/login', (req, res) => {
-    const { email, password } = req.body;
-    // Verify username and password later here
-    
-    const token = jwt.sign({ email, password }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    res.status(200).json({ token: token });
+// app.post('/api/login', (req, res) => {
   
-});
+  
+// });
 
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);
