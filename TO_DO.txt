@@ -5,5 +5,16 @@ User route REST API
     Do login and signup validation by checking database
 
 Orders REST API
+    post order from student for specific lessons
+    get all Orders
+    get orders by id
+    get orders for a specific user (My courses page for student )
+    delete order by id (Student unsubscribe from a course )
 
-Products REST API
+
+Lessons REST API
+    get all lessons
+    get lessons by id
+    get lessons provided by a specific tutor(My courses page for tutor)
+    post lessons (Create lessons page for tutor)
+    delete lessons
