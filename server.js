@@ -5,6 +5,7 @@ const protect = require('./middleware/auth');
 const jwt = require('jsonwebtoken');
 const usersRouter = require('./routes/users');
 const lessonsRouter = require('./routes/lessons');
+const ordersRouter = require('./routes/orders');
 
 // Load environment variables from .env file
 dotenv.config();
@@ -19,6 +20,7 @@ app.use(logger);
 // Mount routers
 app.use('/api/users', usersRouter);
 app.use('/api/lessons', lessonsRouter);
+app.use('/api/orders', ordersRouter);
 
 
 app.get('/', (req, res) => {
@@ -28,10 +30,10 @@ app.get('/', (req, res) => {
 
 
 // Protected route example
-app.get('/api/orders', protect, (req, res) => {
+// app.get('/api/orders', protect, (req, res) => {
 
-  res.status(200).json({ message: 'This is a protected orders route', user: req.user, token: req.token });
-});
+//   res.status(200).json({ message: 'This is a protected orders route', user: req.user, token: req.token });
+// });
 
 // Temporary login route for testing
 // app.post('/api/login', (req, res) => {

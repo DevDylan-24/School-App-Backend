@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const { connectToMongoDB } = require('../database/database');
 const { ObjectId } = require('mongodb');
+const protect = require('../middleware/auth');
 
 // Fetch all lessons from database
 router.get('/', async (req, res) => {
@@ -20,8 +21,8 @@ router.get('/:id', async (req, res) => {
 
 });
 
-// Create a new lesson
-router.post('/', async (req, res) => {
+// Create a new lesson protected route by JWT middleware
+router.post('/', protect, async (req, res) => {
     try {
 
         req.body.createdAt = new Date();
@@ -39,8 +40,8 @@ router.post('/', async (req, res) => {
     }
 });
 
-// Delete lesson by ID
-router.delete('/:id', async (req, res) => {
+// Delete lesson by ID protected route by JWT middleware
+router.delete('/:id', protect, async (req, res) => {
     const lessonId = req.params.id;
     try {
         const db = await connectToMongoDB();
@@ -55,8 +56,8 @@ router.delete('/:id', async (req, res) => {
     }
 });
 
-// Get lessons by tutor ID
-router.get('/tutor/:tutorId', async (req, res) => {
+// Get lessons by tutor ID protected route by JWT middleware
+router.get('/tutor/:tutorId', protect, async (req, res) => {
     const tutorId = req.params.tutorId;
     const db = await connectToMongoDB();
     const lessonsCollection = db.collection('lessons');
@@ -64,8 +65,8 @@ router.get('/tutor/:tutorId', async (req, res) => {
     res.status(200).json(lessons);
 });
 
-// Update lesson by ID
-router.put('/:id', async (req, res) => {
+// Update lesson by ID protected route by JWT middleware
+router.put('/:id', protect, async (req, res) => {
     const lessonId = req.params.id;
     const updatedData = req.body;
     try {
