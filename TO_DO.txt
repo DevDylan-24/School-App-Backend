@@ -1,10 +1,10 @@
 Middleware
     Save JWT token locally to supply in header on frontend(Session storage maybe idk)
 
-User route REST API
+User route REST API     ->Done
     Do login and signup validation by checking database
 
-Orders REST API
+Orders REST API         ->Done
     post order from student for specific lessons
     get all Orders
     get orders by id
@@ -12,7 +12,7 @@ Orders REST API
     delete order by id (Student unsubscribe from a course )
 
 
-Lessons REST API
+Lessons REST API                -> Done
     get all lessons
     get lessons by id
     get lessons provided by a specific tutor(My courses page for tutor)
