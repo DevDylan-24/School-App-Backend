@@ -18,3 +18,6 @@ Lessons REST API                -> Done
     get lessons provided by a specific tutor(My courses page for tutor)
     post lessons (Create lessons page for tutor)
     delete lessons
+
+
+Decrease number of spaces for lesson when order 

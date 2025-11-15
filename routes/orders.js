@@ -3,6 +3,9 @@ const { connectToMongoDB } = require('../database/database');
 const { ObjectId } = require('mongodb');
 const protect = require('../middleware/auth');
 
+// Change number of spaces for lesson when an order is created
+
+
 // Fetch all orders from database
 router.get('/', async (req, res) => {
     const db = await connectToMongoDB();
