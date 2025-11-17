@@ -20,4 +20,4 @@ Lessons REST API                -> Done
     delete lessons
 
 
-Decrease number of spaces for lesson when order  -> To do urgently
+Decrease number of spaces for lesson when order  -> To do urgently      -> Done
