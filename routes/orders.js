@@ -27,17 +27,31 @@ router.get('/:id', async (req, res) => {
 router.post('/', protect, async (req, res) => {
     try {
         req.body.createdAt = new Date();
-        let totalPrice = 0;
-        req.body.lessons.forEach(lesson => {
-            totalPrice += lesson.price;
-        });
-        req.body.totalPrice = totalPrice;
 
         const db = await connectToMongoDB();
         const ordersCollection = db.collection('orders');
+        const lessonCollection = db.collection('lessons');
+
+        // Updating number of spaces for each lesson booked in lessons collection
+        for(const lesson of req.body.lessons){
+            const result = await lessonCollection.updateOne(   
+                {_id : new ObjectId(lesson._id)},
+                {$set: { spaces: lesson.spaces }}
+            );
+
+             console.log(`Updated lesson ${lesson._id}:`, result.modifiedCount);
+            
+            if (result.modifiedCount === 0) {
+                console.warn(`No lesson found with _id: ${lesson._id}`);
+            }
+        }
+
         const newOrder = req.body;
         const result = await ordersCollection.insertOne(newOrder);
+
+
         res.status(201).json({ message: 'Order created successfully', orderId: result.insertedId });
+
     } catch (error) {
         res.status(500).json({ message: 'Server error: ' + error.message });
     }
