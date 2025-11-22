@@ -54,7 +54,7 @@ router.post('/login', async (req, res) => {
 // User registration route
 router.post('/register', async (req, res) => {
     try {
-        const { name, email, password, role } = req.body;
+        const { name, email, password, phone, role } = req.body;
         
         // Check if user already exists
         const db = await connectToMongoDB();
@@ -68,7 +68,7 @@ router.post('/register', async (req, res) => {
             const salt = await bcrypt.genSalt(10);
             const hashedPassword = await bcrypt.hash(password, salt);
             // Create new user object
-            let newUser = { name: name, email: email, password: hashedPassword, role: role };
+            let newUser = { name: name, email: email, password: hashedPassword, phone: phone, role: role };
             await usersCollection.insertOne(newUser);
             return res.status(201).json({ message: 'User registered successfully with Id: ' + newUser._id });
         }
