@@ -65,23 +65,56 @@ router.get('/tutor/:tutorId', protect, async (req, res) => {
     res.status(200).json(lessons);
 });
 
-// Update lesson by ID protected route by JWT middleware
-router.put('/:id', protect, async (req, res) => {
-    const lessonId = req.params.id;
-    const updatedData = req.body;
+// // Update lesson by ID protected route by JWT middleware
+// router.put('/:id', protect, async (req, res) => {
+//     const lessonId = req.params.id;
+//     const updatedData = req.body;
+//     try {
+//         const db = await connectToMongoDB();
+//         const lessonsCollection = db.collection('lessons');
+//         const result = await lessonsCollection.updateOne(
+//             { _id: new ObjectId(lessonId) },
+//             { $set: updatedData }
+//         );
+//         if (result.matchedCount === 0) {
+//             return res.status(404).json({ message: 'Lesson not found' });
+//         }
+//         res.status(200).json({ message: 'Lesson updated successfully' , updatedResult: result.modifiedCount});
+//     } catch (error) {
+//         res.status(500).json({ message: 'Server error: ' + error.message });
+//     }
+// });
+
+// routes/lessons.js
+router.put('/batch-update', async (req, res) => {
     try {
+        const { lessons } = req.body;
+        
         const db = await connectToMongoDB();
         const lessonsCollection = db.collection('lessons');
-        const result = await lessonsCollection.updateOne(
-            { _id: new ObjectId(lessonId) },
-            { $set: updatedData }
-        );
-        if (result.matchedCount === 0) {
-            return res.status(404).json({ message: 'Lesson not found' });
-        }
-        res.status(200).json({ message: 'Lesson updated successfully' , updatedResult: result.modifiedCount});
+         const bulkOperations = lessons.map(lesson => {
+            // Create a copy of the lesson without _id
+            const { _id, ...updateData } = lesson;
+            
+            return {
+                updateOne: {
+                    filter: { _id: new ObjectId(lesson._id) },
+                    update: { $set: updateData } // Only update fields without _id
+                }
+            };
+        });
+
+        // Execute single bulk operation
+        const result = await lessonsCollection.bulkWrite(bulkOperations);
+        
+        res.json({ 
+            success: true, 
+            matched: result.matchedCount,
+            modified: result.modifiedCount
+        });
     } catch (error) {
-        res.status(500).json({ message: 'Server error: ' + error.message });
+        console.error('Batch update error:', error);
+        res.status(500).json({ error: error.message });
     }
 });
 
