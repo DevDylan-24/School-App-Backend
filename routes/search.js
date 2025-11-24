@@ -3,51 +3,62 @@ const router = express.Router();
 const { connectToMongoDB } = require('../database/database');
 
 
-// GET /api/search?q=searchTerm
+// Regex with indexes
 router.get('/', async (req, res) => {
   try {
-    
     const { q } = req.query;
+    
+    if (!q || q.trim() === '') {
+        const db = await connectToMongoDB();
+        const lessonsCollection = db.collection('lessons');
+        const allLessons = await lessonsCollection.find({}).limit(100).toArray();
+        return res.json(allLessons);
+    }
+
+    const searchTerm = q.trim();
     const db = await connectToMongoDB();
     const lessonsCollection = db.collection('lessons');
     
-    if (!q || q.trim() === '') {
-        // If no search term, return all lessons
-        const allLessons = await lessonsCollection.find({}).toArray();
-        res.status(200).json(allLessons);
-    }else{
-
-    const searchTerm = q.trim();
-    
-    // Create a case-insensitive regex for partial matching
-    const searchRegex = new RegExp(searchTerm, 'i');
-
-     // Check if search term is a number for price/spaces search
+    // Check if search term is numeric
     const isNumeric = !isNaN(searchTerm) && !isNaN(parseFloat(searchTerm));
     const numericValue = isNumeric ? parseFloat(searchTerm) : null;
 
-     let searchQuery = {
-      $or: [
-        { title: { $regex: searchRegex }},
-        { subject: { $regex: searchRegex }},
-        { location: { $regex: searchRegex }},
-        { tutor: {$regex: searchRegex }}
-      ]
-    };
-
+    let searchQuery = {};
+    
     if (isNumeric) {
-      searchQuery.$or.push(
-        { price: numericValue },
-        { spaces: numericValue }
-      );
+        searchQuery = {
+            $or: [
+                { price: numericValue },
+                { spaces: numericValue }
+            ]
+        };
+    } else {
+        // Use anchored regex for partial matching that can use indexes
+        searchQuery = {
+            $or: [
+                { subject: { $regex: `^${searchTerm}`, $options: 'i' } }, 
+                { location: { $regex: `^${searchTerm}`, $options: 'i' } },
+                { title: { $regex: `^${searchTerm}`, $options: 'i' } },
+                { tutor: { $regex: `^${searchTerm}`, $options: 'i' } }
+            ]
+        };
+        
+        // For very short queries, also search anywhere in string
+        if (searchTerm.length <= 3) {
+            searchQuery.$or.push(
+                { subject: { $regex: searchTerm, $options: 'i' } },
+                { location: { $regex: searchTerm, $options: 'i' } },
+                { title: { $regex: searchTerm, $options: 'i' } },
+                { tutor: { $regex: searchTerm, $options: 'i' } }
+            );
+        }
     }
 
-    // Search across multiple fields
-    const lessons = await lessonsCollection.find(searchQuery).toArray();
+    const lessons = await lessonsCollection.find(searchQuery)
+        .limit(50)
+        .toArray();
 
     res.json(lessons);
-    
-  }
 
   } catch (error) {
     console.error('Search error:', error);

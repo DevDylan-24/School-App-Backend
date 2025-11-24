@@ -11,6 +11,7 @@ const lessonsRouter = require('./routes/lessons');
 const ordersRouter = require('./routes/orders');
 const searchRouter = require('./routes/search');
 
+
 // Load environment variables from .env file
 dotenv.config();
 
@@ -58,6 +59,7 @@ app.get('/api/images/lessons/:imageName', async (req,res) => {
 
 
 app.listen(port, () => {
-  console.log(`Static images served from: ${path.join(__dirname, 'public/images/lessons')}`);
-  console.log(`Server is running at http://localhost:${port}`);
+    // Call this when your server starts
+    console.log(`Static images served from: ${path.join(__dirname, 'public/images/lessons')}`);
+    console.log(`Server is running at http://localhost:${port}`);
 });
