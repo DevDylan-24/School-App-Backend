@@ -65,26 +65,6 @@ router.get('/tutor/:tutorId', protect, async (req, res) => {
     res.status(200).json(lessons);
 });
 
-// // Update lesson by ID protected route by JWT middleware
-// router.put('/:id', protect, async (req, res) => {
-//     const lessonId = req.params.id;
-//     const updatedData = req.body;
-//     try {
-//         const db = await connectToMongoDB();
-//         const lessonsCollection = db.collection('lessons');
-//         const result = await lessonsCollection.updateOne(
-//             { _id: new ObjectId(lessonId) },
-//             { $set: updatedData }
-//         );
-//         if (result.matchedCount === 0) {
-//             return res.status(404).json({ message: 'Lesson not found' });
-//         }
-//         res.status(200).json({ message: 'Lesson updated successfully' , updatedResult: result.modifiedCount});
-//     } catch (error) {
-//         res.status(500).json({ message: 'Server error: ' + error.message });
-//     }
-// });
-
 // routes/lessons.js
 router.put('/batch-update', async (req, res) => {
     try {
